@@ -16,7 +16,7 @@ let name = "Replay Token";
 let symbol = "RPLAY";
 let decimal = 18;
 let maxSupply = dec18.mul(new BN(1000000000));
-let stakerRewardPerBlock = dec18.mul(new BN(2));
+let stakerRewardPerBlock = dec18.mul(new BN(20));
 let initMintAmount = dec18.mul(new BN(600000000));
 let minter;
 let initDistrWallet;
