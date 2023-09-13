@@ -3,7 +3,7 @@
 # Setup for the Mainnet Environment
 
 **IMPORTANT**: The following instructions are currently being revised and are a WORK IN PROGRESS. Please proceed with caution and be aware that changes may be ongoing.
-If any questions arise during the set up process please email [support@imaginereplay.com](mailto:support@imaginereplay.com) or contact us on #validator-support channel on discord.
+If any questions arise during the set up process please email [support@imaginereplay.org](mailto:support@imaginereplay.org) or contact us on #validator-support channel on discord.
 
 We highly encourage going through following documentation before you proceed with main net setup:
 - [Replay Whitepaper](https://assets-cdn.imaginereplay.com/docs/Imagine-Replay-Whitepaper-latest.pdf)
@@ -13,7 +13,7 @@ We highly encourage going through following documentation before you proceed wit
 ## Requirements
 You need to have a machine with following requirements and periodically monitor if all the processes are running as expected.
 
-### Hardware requirements:
+### Hardware Minimum Requirements:
 - Memory: 16 GB
 - CPU: 16 cores
 - Storage Disk: 1 TB SSD
@@ -209,11 +209,11 @@ Update following values:
 
 ## 3. Download subchain snapshot
 
-Please contact admin [support@imaginereplay.com](mailto:support@imaginereplay.com) or on discord channel #validator-support for the latest snapshot of subchain. We are currently working on setting up auto backups.
+Please contact admin [support@imaginereplay.org](mailto:support@imaginereplay.org) or on discord channel #validator-support for the latest snapshot of subchain. We are currently working on setting up auto backups.
 
 ## 4. Stake to a New Validator
 
-As a validator you can stake any amount of RPLAY. There is no limit on amount of RPLAy as long as the admin/operator wallet holds 20k TFuel and 1000 wTheta.
+As a validator you can stake any amount of RPLAY. There is no limit on amount of RPLAY as long as the admin/operator wallet holds 20k TFuel and 1000 wTheta.
 
 ```shell
 cd ~/metachain_playground/theta-metachain-guide/sdk/js
