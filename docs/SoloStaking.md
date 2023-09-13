@@ -17,7 +17,7 @@ You need to have a machine with following requirements and periodically monitor 
 - Memory: 16 GB
 - CPU: 16 cores
 - Storage Disk: 1 TB SSD
-- Network Bandwidth: 200Mbps symmetrical commercial network
+- Network Bandwidth: 200 Mbps symmetrical commercial network
 - Operating System: Ubuntu
 
 ### Admin wallet creation:
