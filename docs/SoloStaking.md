@@ -3,10 +3,15 @@
 # Setup for the Mainnet Environment
 
 **IMPORTANT**: The following instructions are currently being revised and are a WORK IN PROGRESS. Please proceed with caution and be aware that changes may be ongoing.
-If any questions arise during the set up process please email support@imaginereplay.com or contact us on #validator-support channel on discord.
+If any questions arise during the set up process please email [support@imaginereplay.com](mailto:support@imaginereplay.com) or contact us on #validator-support channel on discord.
+
+We highly encourage going through following documentation before you proceed with main net setup:
+- [Replay Whitepaper](https://assets-cdn.imaginereplay.com/docs/Imagine-Replay-Whitepaper-latest.pdf)
+- [Theta Metachain Whitepaper](https://assets.thetatoken.org/theta-mainnet-4-whitepaper.pdf)
+- [Theta Subchain Privatenet Setup](https://github.com/thetatoken/theta-metachain-guide/blob/master/docs/1-privatenet/README.md)
 
 ## Requirements
-You need to have a machine with following requirements and periodically monitor if all the process are running as expected.
+You need to have a machine with following requirements and periodically monitor if all the processes are running as expected.
 
 ### Hardware requirements:
 - Memory: 16 GB
@@ -17,19 +22,20 @@ You need to have a machine with following requirements and periodically monitor 
 
 ### Admin wallet creation:
 
-First, please setup an admin wallet. You can generate it using the `thetacli key new` command or through the [Theta Web Wallet](https://wallet.thetatoken.org/unlock/keystore-file). If you generate the wallet using `thetacli key new`, it will automatically place the keystore file under `~/.thetacli/keys/encrypted/`. If you generate the key using the Theta Web Wallet, please copy the keystore file to the same folder.
+First, please set up an admin wallet. You can generate it using the `thetacli key new` command or through the [Theta Web Wallet](https://wallet.thetatoken.org/unlock/keystore-file). If you generate the wallet using `thetacli key new`, it will automatically place the keystore file under `~/.thetacli/keys/encrypted/`. If you generate the key using the Theta Web Wallet, please copy the keystore file to the same folder.
 
 ### Admin requirements:
 
 In addition to the hardware requirements, you will need the following tokens:
--1000 wTheta: If you have THETA tokens, they can be wrapped on the Theta Wallet.
--20000 TFUEL: This amount is required to cover cross-chain transfers that require TFUEL.
+- 1000 wTheta: If you have THETA tokens, they can be wrapped on the Theta Wallet.
+- 20000 TFUEL: This amount is required to cover cross-chain transfers that require TFUEL.
+- RPLAY tokens you wish to stake. 
 
 ## 1. Setup (Run once)
 
 First, please make sure the following software are installed on your machine:
-- [Golang](https://go.dev/dl/) 1.14 or higher version. Also please make sure Golang related env variables like `$GOPATH` are set properly.
-- The [Truffle suite](https://trufflesuite.com/docs/truffle/getting-started/installation/) for smart contract compilation and deployment
+- [Golang](https://go.dev/dl/) 1.14 or higher version. Please make sure Golang related env variables like `$GOPATH` are set properly.
+- [Node.js](https://nodejs.org/en/download)
 
 ### 1.1 Compile the Theta binaries
 
@@ -50,7 +56,7 @@ make install
 
 ### 1.2 Compile the ETH RPC Adapter binary
 
-Compile the ETH RPC Adapter binary from source code:
+Compile the ETH RPC Adapter binary from the source code:
 
 ```shell
 cd $GOPATH/src/github.com/thetatoken
@@ -65,7 +71,7 @@ make install
 
 ### 1.3 Compile the Subchain binaries
 
-Compile the subchain binaries from source code:
+Compile the subchain binaries from the source code:
 
 ```shell
 # switch THETA to the sc-privatenet branch before compiling thetasubchain
@@ -201,11 +207,11 @@ Update following values:
 - `genesis.hash` - `0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0`
 - `chainID` - `77529`
 
-## 4. Download subchain snapshot
+## 3. Download subchain snapshot
 
-Please contact admin support@imaginereplay.com or on discord channel #validator-support for the latest snapshot of subchain. We are currently working on setting up auto backups
+Please contact admin [support@imaginereplay.com](mailto:support@imaginereplay.com) or on discord channel #validator-support for the latest snapshot of subchain. We are currently working on setting up auto backups.
 
-## 5. Stake to a New Validator
+## 4. Stake to a New Validator
 
 As a validator you can stake any amount of RPLAY. There is no limit on amount of RPLAy as long as the admin/operator wallet holds 20k TFuel and 1000 wTheta.
 
@@ -216,7 +222,7 @@ node depositStake.js mainnet <INIT_STAKE_AMOUNT> <VALIDATOR_ADDRESS> <PATH/TO/AD
 `INIT_STAKE_AMOUNT` is the RPLAY amount that is being staked. Make sure wallet holds the `INIT_STAKE_AMOUNT`
 The script prints out the ValidatorSet of the next dynasty. Make sure your validators are included. If not, please search with the tx hash on the [Theta Explorer](https://explorer.thetatoken.org/) and see why it failed. A possible cause is that the admin wallet does not have sufficient amount of wTHETA and TFuel (least 1,000 wTHETA and 20,000 TFuel are required).
 
-## 6. Run the Subchain validator and the ETH RPC Adapter
+## 5. Run the Subchain validator and the ETH RPC Adapter
 
 After the above staking transaction is finalized, we can start the ETH RPC adapter and the Subchain Validator. We need start the subchain ETH RPC adapter **before** starting the subchain validator. This order is important.
 
@@ -233,7 +239,7 @@ cd ~/metachain_playground/mainnet/workspace
 thetasubchain start --config=../subchain/validator --password=<VALIDATOR_PASSWORD>
 ```
 
-If the Subchain starts finalizing blocks, congratulations! You have succuessfully configured and launched a Subchain for the Metachain Mainnet! The Subchian validator should produce and finalize a block every second, which is much faster than the Main Chain. Next, you can use the JS SDK we provide to send digital assets (TFuel, TNT20/721/1155 tokens) between the Main Chain and the Subchain, which also serve as good sanity checks regarding whether the Subchain is functioning correctly.
+If the Subchain starts finalizing blocks, congratulations! You have successfully configured and launched a Subchain for the Metachain Mainnet! The Subchian validator should produce and finalize a block every second, which is much faster than the Main Chain. Next, you can use the JS SDK we provide to send digital assets (TFuel, TNT20/721/1155 tokens) between the Main Chain and the Subchain, which also serve as good sanity checks regarding whether the Subchain is functioning correctly.
 
 
 
