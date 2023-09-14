@@ -14,19 +14,19 @@ Before staking with real tokens, it is advisable to test your setup and operatio
 
 ## How to Run a Replay Validator
 
-To set up a Replay Subchain Validator on Mainnet, you will need the following hardware:
+You need to have a machine with following requirements and periodically monitor if all the processes are running as expected. These are recommended by Theta team to run a validator as part of Replay sub chain:
 
 **Hardware Minimum requirements:**
-- Memory: 16 GB
-- CPU: 16 cores
+- Memory: 16 GB RAM
+- CPU: 8 cores
 - Storage Disk: 1 TB SSD
 - Network Bandwidth: 200Mbps symmetrical commercial network
 - Operating System: Ubuntu
 
 In addition to the hardware requirements, you will need the following tokens as well:
 - 1000 wTheta: If you have THETA tokens, they can be wrapped on the Theta Wallet.
-- 25000 TFUEL: This amount is required to cover cross-chain transfers that require TFUEL.
-- RPLAY tokens
+- 20,000 TFUEL + additional to cover gas fees : This amount is required to cover cross-chain transfers that require TFUEL. Additional gas fees is to perform deposit stake transaction.
+- At least 1 RPLAY token :)
 
 Please ensure that you have the necessary hardware and tokens before proceeding with the validator setup.
 

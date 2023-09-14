@@ -3,22 +3,33 @@
 # Setup for the Mainnet Environment
 
 **IMPORTANT**: The following instructions are currently being revised and are a WORK IN PROGRESS. Please proceed with caution and be aware that changes may be ongoing.
-If any questions arise during the set up process please email [support@imaginereplay.org](mailto:support@imaginereplay.org) or contact us on #validator-support channel on discord.
+If any questions arise during the setup process please email [support@imaginereplay.org](mailto:support@imaginereplay.org) or contact us on #validator-support channel on discord.
+
+**Reward mechanism**:
+To incentivize all validators in operating the subchain, we have established a Staker reward of 10 RPLAY tokens per block. Blocks are generated at a 7-second interval, and the Theta protocol computes the rewards for each staker or validator based on their staked RPLAY tokens. The greater the amount staked, the higher the rewards earned by the staker.
 
 We highly encourage going through following documentation before you proceed with main net setup:
 - [Replay Whitepaper](https://assets-cdn.imaginereplay.com/docs/Imagine-Replay-Whitepaper-latest.pdf)
 - [Theta Metachain Whitepaper](https://assets.thetatoken.org/theta-mainnet-4-whitepaper.pdf)
-- [Theta Subchain Privatenet Setup](https://github.com/thetatoken/theta-metachain-guide/blob/master/docs/1-privatenet/README.md)
+- [Theta Subchain Testnet Setup](https://github.com/thetatoken/theta-metachain-guide/blob/master/docs/2-testnet/manual-flow/1-setup.md)
+
+This document gives an overview on how to launch a subchain. At a high level, it consists of the following steps:
+- **Requirements**: All the hardware requirements and tokens needed to start and stake into a validator.
+- **Set up**: This involves setting up all the binaries that are needed to run main chain node and sub chain node. You run this only once. You will set up main chain node, main chain eth rpc and sub chain binaries. You will also set up a workspace folder with theta metachain guide which runs the scripts from here - [Theta Metachain Guide](https://github.com/thetatoken/theta-metachain-guide)
+- **Run the node in read only mode**: This is a step before proceeding to staking step. Once this set up is completed it means you have a node running successfully and the node is connecting to the peers to finalize the blocks. Since we did not stake any RPLAY tokens up until now staking rewards won't be seen yet. Make sure all four processes are running smoothly, and you are seeing expected output before proceeding to the next step.  
+- **Staking to Validator**: In this step RPLAY tokens are staked into the validator and the staker can start earning rewards. At this point you will be able to see your validator listed under nodes on sub chain explorer. This also means that other stakers can start depositing stakes into your validator.
 
 ## Requirements
-You need to have a machine with following requirements and periodically monitor if all the processes are running as expected.
+You need to have a machine with following requirements and periodically monitor if all the processes are running as expected. These are recommended by Theta team to run a validator as part of Replay sub chain:
 
 ### Hardware Minimum Requirements:
-- Memory: 16 GB
-- CPU: 16 cores
+- Memory: 16 GB RAM
+- CPU: 8 cores
 - Storage Disk: 1 TB SSD
 - Network Bandwidth: 200Mbps symmetrical commercial network
 - Operating System: Ubuntu
+
+You may use AWS, Google or any other cloud hosting services that can satisfy above requirements. For example - m6a.2xlarge on AWS with added 1 TB SSD storage will give you the right instance.
 
 ### Admin wallet creation:
 
@@ -28,16 +39,26 @@ First, please set up an admin wallet. You can generate it using the `thetacli ke
 
 In addition to the hardware requirements, you will need the following tokens:
 - 1000 wTheta: If you have THETA tokens, they can be wrapped on the Theta Wallet.
-- 20000 TFUEL: This amount is required to cover cross-chain transfers that require TFUEL.
-- RPLAY tokens you wish to stake. 
+- 20,000 TFUEL + additional to cover gas fees : This amount is required to cover cross-chain transfers that require TFUEL. Additional gas fees is to perform deposit stake transaction. 
+- At least 1 RPLAY token :)
 
-## 1. Setup (Run once)
+## Setup (Run once)
 
 First, please make sure the following software are installed on your machine:
 - [Golang](https://go.dev/dl/) 1.14 or higher version. Please make sure Golang related env variables like `$GOPATH` are set properly.
 - [Node.js](https://nodejs.org/en/download)
 
-### 1.1 Compile the Theta binaries
+Also refer - [Theta Subchain Setup](https://github.com/thetatoken/theta-metachain-guide/tree/master/docs/0-overview) for more details. The following steps are directly quoted from the documentation on theta metachain guide. Please refer the guide as well while running these steps. 
+
+You need to understand that - there will be 4 processes running on each instance. They will be:
+- Main Chain Node - Default Port: 12000
+- Main chain ETH RPC adapter - Default Port: 16888
+- Subchain Node - Default Port: 12100
+- Sub chain ETH RPC adapter - Default Port: 16900
+
+As per [Theta Metachain Whitepaper](https://assets.thetatoken.org/theta-mainnet-4-whitepaper.pdf)
+
+### 1 Compile the Theta binaries
 
 Compile the Theta binaries from source code:
 
@@ -54,7 +75,7 @@ export GO111MODULE=on
 make install
 ```
 
-### 1.2 Compile the ETH RPC Adapter binary
+### 2 Compile the ETH RPC Adapter binary
 
 Compile the ETH RPC Adapter binary from the source code:
 
@@ -69,7 +90,7 @@ export GO111MODULE=on
 make install
 ```
 
-### 1.3 Compile the Subchain binaries
+### 3 Compile the Subchain binaries
 
 Compile the subchain binaries from the source code:
 
@@ -88,7 +109,7 @@ export GO111MODULE=on
 make install
 ```
 
-### 1.4 Setup the Workspace for the Mainnet Environment
+### 4 Setup the Workspace for the Mainnet Environment
 
 Run the following commands to setup the workspace:
 
@@ -125,7 +146,7 @@ wget -O ./snapshot `curl -k https://mainnet-data.thetatoken.org/snapshot`
 curl -k --output ./config.yaml `curl -k 'https://mainnet-data.thetatoken.org/config?is_guardian=true'`
 ```
 
-# Subchain Validator Staking:
+# Run the node in read only mode:
 
 **IMPORTANT**: The following instructions are currently being revised and are a WORK IN PROGRESS. Please proceed with caution and be aware that changes may be ongoing.
 
@@ -184,6 +205,8 @@ The response looks like this:
 }
 ```
 
+### 2.1 Update configs.js 
+
 Update following config values before proceeding:
 ```shell
 cd ~/metachain_playground/theta-metachain-guide/sdk/js
@@ -195,7 +218,9 @@ Under `MainnetConfigs` change the following values:
 - `subchainID` - `77529`
 - `subchainIDStr` - `tsub77529`
 
-Make sure rest of the config contract addresses match with [Theta Main Repo Documentation](https://github.com/thetatoken/theta-metachain-guide/blob/master/docs/2-testnet/manual-flow/2-register-and-staking.md)
+Make sure rest of the config contract addresses match with [Theta Mainnet Configs](https://github.com/thetatoken/theta-metachain-guide/blob/master/sdk/js/configs.js)
+
+### 2.2 Update configs.yaml for validator
 
 We also need to update the configs for the validator:
 ```shell
@@ -206,40 +231,95 @@ vi config.yaml
 Update following values:
 - `genesis.hash` - `0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0`
 - `chainID` - `77529`
+- `p2p.seeds` - `34.229.223.153:12100,35.91.247.238:12100,35.179.97.120:12100,13.229.96.145:12100` 
 
 ## 3. Download subchain snapshot
 
 Please contact admin [support@imaginereplay.org](mailto:support@imaginereplay.org) or on discord channel #validator-support for the latest snapshot of subchain. We are currently working on setting up auto backups.
 
-## 4. Stake to a New Validator
+Place the snapshot file under `~/metachain_playground/mainnet/subchain/validator`
 
-As a validator you can stake any amount of RPLAY. There is no limit on amount of RPLAY as long as the admin/operator wallet holds 20k TFuel and 1000 wTheta.
+## 4. Run the Subchain validator and the ETH RPC Adapter
+
+Next, please place the keystore file of your subchain validator under `~/metachain_playground/mainnet/subchain/validator/key/encrypted/`. You can run following commands to do that:
 
 ```shell
-cd ~/metachain_playground/theta-metachain-guide/sdk/js
-node depositStake.js mainnet <INIT_STAKE_AMOUNT> <VALIDATOR_ADDRESS> <PATH/TO/ADMIN_WALLET_KEYSTORE_FILE> <ADMIN_WALLET_PASSWORD>
+cd ~/metachain_playground/testnet/subchain/validator
+mkdir -p key/encrypted/
+cp ~/.thetacli/keys/encrypted/YOUR_KEYSTORE key/encrypted/
 ```
-`INIT_STAKE_AMOUNT` is the RPLAY amount that is being staked. Make sure wallet holds the `INIT_STAKE_AMOUNT`
-The script prints out the ValidatorSet of the next dynasty. Make sure your validators are included. If not, please search with the tx hash on the [Theta Explorer](https://explorer.thetatoken.org/) and see why it failed. A possible cause is that the admin wallet does not have sufficient amount of wTHETA and TFuel (least 1,000 wTHETA and 20,000 TFuel are required).
 
-## 5. Run the Subchain validator and the ETH RPC Adapter
-
-After the above staking transaction is finalized, we can start the ETH RPC adapter and the Subchain Validator. We need start the subchain ETH RPC adapter **before** starting the subchain validator. This order is important.
+We can start the ETH RPC adapter and the Subchain Validator. We need start the subchain ETH RPC adapter **before** starting the subchain validator. This order is important:
 
 ```shell
 cd ~/metachain_playground/mainnet/workspace
 theta-eth-rpc-adaptor start --config=../subchain/ethrpc
 ```
 
-Next, please place the keystore file of your subchain validator (i.e. the keystore file corresponds to`<VALIDATOR_ADDRESS>` you specified above) under `~/metachain_playground/mainnet/subchain/validator/key/encrypted/`. Then, run the following command to start the validator:
+Now start the subchain node:
 
-
-```
+```shell
 cd ~/metachain_playground/mainnet/workspace
 thetasubchain start --config=../subchain/validator --password=<VALIDATOR_PASSWORD>
 ```
 
-If the Subchain starts finalizing blocks, congratulations! You have successfully configured and launched a Subchain for the Metachain Mainnet! The Subchian validator should produce and finalize a block every second, which is much faster than the Main Chain. Next, you can use the JS SDK we provide to send digital assets (TFuel, TNT20/721/1155 tokens) between the Main Chain and the Subchain, which also serve as good sanity checks regarding whether the Subchain is functioning correctly.
+The `VALIDATOR_PASSWORD` above corresponds to the password of the keystore file stored in `~/metachain_playground/mainnet/subchain/validator/key/encrypted/`. Once the above process starts running it may take some time to sync to the subchain1c1 
 
+## 5. Open validator and ETC RPC ports
 
+Now that we have our validator running we need to open some ports so other validators can discover the node. We can verify this by calling the RPC endpoint to make sure everything is set up correctly before we move to staking step.
+
+Assuming you did not change the ports in any of the config files above - open following sub chain ports to the public so any ip address can call them:
+- Subchain Node - Open Port: 12100
+- Sub chain ETH RPC adapter - Open Port: 16900
+
+Make following curl request and check the response to make sure everything is set up well:
+```shell
+curl -X POST -H 'Content-Type: application/json' --data '{"id":1,"jsonrpc":"2.0","method": "theta.GetStatus","params":[]}' http://<YOUR_VALIDATOR_IP_ADDRESS>:16900/rpc
+
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+        "address": "<YOUR_VALIDATOR_ADDRESS>",
+        "chain_id": "tsub77529",
+        "peer_id": "0xE1A8f31CebeFa3E469b3a45B8CEc2f4C22945407", // this might vary
+        "latest_finalized_block_hash": "0x4ced990fc513db2cf0fd18b615fd904e60344767b5c94eaeda219b53c619cb04", // this might vary
+        "latest_finalized_block_height": "359239", // this might vary
+        "latest_finalized_block_time": "1694555950", // this might vary
+        "latest_finalized_block_epoch": "359239", // this might vary
+        "current_epoch": "359241", // this might vary
+        "current_height": "359239", // this might vary
+        "current_time": "1694555958", // this might vary
+        "syncing": false, // this should be false
+        "genesis_block_hash": "0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0", // this might vary 
+        "snapshot_block_height": "0", // this might vary
+        "snapshot_block_hash": "0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0" // this might vary
+    }
+}
+
+```
+
+If you make repeated calls you will observe that `latest_finalized_block_height` will increase with time as new blocks are created. Congratulations! You have successfully set up a node, ETH RPC adapter and now finalizing blocks. 
+
+At this point please contact [support@imaginereplay.org](mailto:support@imaginereplay.org), do not post your IP address or validator address on discord yet. Once we confirm the validator is running smoothly we will proceed to next step to stake RPLAY tokens, so you can start earning rewards.
+
+## Stake to a New Validator
+
+As a validator you can stake any amount of RPLAY. There is no limit on amount of RPLAY as long as the admin/operator wallet holds 20k TFuel + additional gas fees  and 1000 wTheta. These funds are held as collateral against running the subchain. Refer to Theta white paper for more details on the protocol.
+
+By now you should have completed all the setup and have a validator that's running successfully. Please make sure you contact [support@imaginereplay.org](mailto:support@imaginereplay.org) before staking RPLAY. If you are validated by RPLAY team then go ahead and proceed to the next step:
+
+```shell
+cd ~/metachain_playground/theta-metachain-guide/sdk/js
+node depositStake.js mainnet <STAKE_AMOUNT> <VALIDATOR_ADDRESS> <PATH/TO/ADMIN_WALLET_KEYSTORE_FILE> <ADMIN_WALLET_PASSWORD>
+```
+
+`STAKE_AMOUNT` is the RPLAY amount that is being staked. Make sure wallet holds the `STAKE_AMOUNT`. Please be mindful that this amount is represented in WEI so for example if you are staking 5000 RPLAY the command looks like this:
+
+```shell
+node depositStake.js mainnet 5000000000000000000000 <VALIDATOR_ADDRESS> <PATH/TO/ADMIN_WALLET_KEYSTORE_FILE> <ADMIN_WALLET_PASSWORD>
+```
+
+The script prints out the ValidatorSet of the next dynasty. Make sure your validators are included. If not, please search with the tx hash on the [Theta Explorer](https://explorer.thetatoken.org/) and see why it failed. A possible cause is that the admin wallet does not have sufficient amount of wTHETA and TFuel (least 1,000 wTHETA and 20,000 TFuel + additional for gas fees are required).
 
