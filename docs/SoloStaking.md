@@ -6,18 +6,21 @@
 If any questions arise during the setup process please email [support@imaginereplay.org](mailto:support@imaginereplay.org) or contact us on #validator-support channel on discord.
 
 **Reward mechanism**:
-To incentivize all validators in operating the subchain, we have established a Staker reward of 10 RPLAY tokens per block. Blocks are generated at a 7-second interval, and the Theta protocol computes the rewards for each staker or validator based on their staked RPLAY tokens. The greater the amount staked, the higher the rewards earned by the staker.
+To incentivize all validators in the operation of the subchain, we have set the Staker reward of 10 RPLAY tokens per block. These blocks are generated every 7 seconds, and the Theta protocol calculates rewards for each staker or validator based on their staked RPLAY tokens. The more tokens staked, the higher the rewards for the staker.
 
+
+### Before you Proceed:
 We highly encourage going through following documentation before you proceed with main net setup:
 - [Replay Whitepaper](https://assets-cdn.imaginereplay.com/docs/Imagine-Replay-Whitepaper-latest.pdf)
 - [Theta Metachain Whitepaper](https://assets.thetatoken.org/theta-mainnet-4-whitepaper.pdf)
 - [Theta Subchain Testnet Setup](https://github.com/thetatoken/theta-metachain-guide/blob/master/docs/2-testnet/manual-flow/1-setup.md)
 
-This document gives an overview on how to launch a subchain. At a high level, it consists of the following steps:
+### Overview of Setting up Replay validator:
+This document offers an overview of launching a validator to be part of Replay subchain. At a high level, the process involves the following steps:
 - **Requirements**: All the hardware requirements and tokens needed to start and stake into a validator.
 - **Set up**: This involves setting up all the binaries that are needed to run main chain node and sub chain node. You run this only once. You will set up main chain node, main chain eth rpc and sub chain binaries. You will also set up a workspace folder with theta metachain guide which runs the scripts from here - [Theta Metachain Guide](https://github.com/thetatoken/theta-metachain-guide)
-- **Run the node in read only mode**: This is a step before proceeding to staking step. Once this set up is completed it means you have a node running successfully and the node is connecting to the peers to finalize the blocks. Since we did not stake any RPLAY tokens up until now staking rewards won't be seen yet. Make sure all four processes are running smoothly, and you are seeing expected output before proceeding to the next step.  
-- **Staking to Validator**: In this step RPLAY tokens are staked into the validator and the staker can start earning rewards. At this point you will be able to see your validator listed under nodes on sub chain explorer. This also means that other stakers can start depositing stakes into your validator.
+- **Run the node in read only mode**: This phase precedes staking. Once this setup is complete, your node is operational, connecting to peers to confirm block finalization. Staking rewards won't be visible at this stage, as no RPLAY tokens have been staked yet. Ensure all four processes are functioning without issues and that you observe the expected output before moving forward.  
+- **Staking to Validator**: In this phase, RPLAY tokens are staked within the validator, enabling the staker to start accumulating rewards. When completed, your validator should be visible in the list of nodes on the subchain explorer. This signals that other stakers can commence depositing their stakes into your validator.
 
 ## Requirements
 You need to have a machine with following requirements and periodically monitor if all the processes are running as expected. These are recommended by Theta team to run a validator as part of Replay sub chain:
@@ -56,11 +59,11 @@ You need to understand that - there will be 4 processes running on each instance
 - Subchain Node - Default Port: 12100
 - Sub chain ETH RPC adapter - Default Port: 16900
 
-As per [Theta Metachain Whitepaper](https://assets.thetatoken.org/theta-mainnet-4-whitepaper.pdf)
+According to the [Theta Metachain Whitepaper](https://assets.thetatoken.org/theta-mainnet-4-whitepaper.pdf)
 
 ### 1 Compile the Theta binaries
 
-Compile the Theta binaries from source code:
+Compile the Theta binaries from the source code:
 
 ```shell
 # Make sure your $GOPATH env variable is set properly below running the following commands
@@ -231,7 +234,7 @@ vi config.yaml
 Update following values:
 - `genesis.hash` - `0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0`
 - `chainID` - `77529`
-- `p2p.seeds` - `34.229.223.153:12100,35.91.247.238:12100,35.179.97.120:12100,13.229.96.145:12100` 
+- `p2p.seeds` - `35.91.247.238:12100` 
 
 ## 3. Download subchain snapshot
 
@@ -265,7 +268,7 @@ thetasubchain start --config=../subchain/validator --password=<VALIDATOR_PASSWOR
 
 The `VALIDATOR_PASSWORD` above corresponds to the password of the keystore file stored in `~/metachain_playground/mainnet/subchain/validator/key/encrypted/`. Once the above process starts running it may take some time to sync to the subchain1c1 
 
-## 5. Open validator and ETC RPC ports
+## 5. Open validator and ETH RPC ports
 
 Now that we have our validator running we need to open some ports so other validators can discover the node. We can verify this by calling the RPC endpoint to make sure everything is set up correctly before we move to staking step.
 
@@ -323,3 +326,4 @@ node depositStake.js mainnet 5000000000000000000000 <VALIDATOR_ADDRESS> <PATH/TO
 
 The script prints out the ValidatorSet of the next dynasty. Make sure your validators are included. If not, please search with the tx hash on the [Theta Explorer](https://explorer.thetatoken.org/) and see why it failed. A possible cause is that the admin wallet does not have sufficient amount of wTHETA and TFuel (least 1,000 wTHETA and 20,000 TFuel + additional for gas fees are required).
 
+You have to wait ~14-18 hours for the validator to become a functional validator. Please shoot us an email once the staking is completed. Keep an eye on this page for your validator to appear - [Subchain Validators](https://tsub77529-explorer.thetatoken.org/stakes). Once you see your validator address appear congratulations, you are part of replay subchain ecosystem! 
