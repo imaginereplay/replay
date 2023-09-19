@@ -176,7 +176,7 @@ cd ~/metachain_playground/mainnet/workspace
 theta-eth-rpc-adaptor start --config=../mainchain/ethrpc
 ```
 
-## 2. Update configs
+## 2. Update/Download configs
 
 Make a curl request to this endpoint to get the updated configs for the subchain:
 
@@ -208,46 +208,46 @@ The response looks like this:
 }
 ```
 
-### 2.1 Update configs.js 
+### 2.1 Update/Download configs.js 
 
-Update following config values before proceeding:
+Download the latest configs.js:
+
 ```shell
 cd ~/metachain_playground/theta-metachain-guide/sdk/js
-vi configs.js
+wget -O ./configs.js 'https://replay-subchain.s3.amazonaws.com/configs.js'
 ```
 
-Under `MainnetConfigs` change the following values:
+Make sure the config values under `MainnetConfigs` match the following values:
 - `govTokenContractAddr` - `0x3Da3D8CDE7B12CD2CBb688E2655BcaCD8946399D`
 - `subchainID` - `77529`
 - `subchainIDStr` - `tsub77529`
 
 Make sure rest of the config contract addresses match with [Theta Mainnet Configs](https://github.com/thetatoken/theta-metachain-guide/blob/master/sdk/js/configs.js)
 
-### 2.2 Update configs.yaml for validator
+### 2.2 Update/Download configs.yaml for validator
 
-We also need to update the configs for the validator:
-```shell
-cd ~/metachain_playground/mainnet/subchain/validator
-vi config.yaml
-```
+Since we already downloaded config.yaml in the previous step we need to make sure the values match the following in the file:  
 
-Update following values:
 - `genesis.hash` - `0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0`
 - `chainID` - `77529`
 - `p2p.seeds` - `35.91.247.238:12100` 
 
 ## 3. Download subchain snapshot
 
-Please contact admin [support@imaginereplay.org](mailto:support@imaginereplay.org) or on discord channel #validator-support for the latest snapshot of subchain. We are currently working on setting up auto backups.
+Please contact admin [support@imaginereplay.org](mailto:support@imaginereplay.org) or on discord channel #validator-support for the latest snapshot of subchain. We are currently working on setting up auto backups. Once you get a response that the snapshot is current and up to date please go ahead with next steps.
 
-Place the snapshot file under `~/metachain_playground/mainnet/subchain/validator`
+```shell
+cd ~/metachain_playground/mainnet/subchain/validator
+wget -O ./snapshot 'https://replay-subchain.s3.amazonaws.com/snapshots/snapshot'
+wget -O ./config.yaml 'https://replay-subchain.s3.amazonaws.com/config.yaml'
+```
 
 ## 4. Run the Subchain validator and the ETH RPC Adapter
 
 Next, please place the keystore file of your subchain validator under `~/metachain_playground/mainnet/subchain/validator/key/encrypted/`. You can run following commands to do that:
 
 ```shell
-cd ~/metachain_playground/testnet/subchain/validator
+cd ~/metachain_playground/mainnet/subchain/validator
 mkdir -p key/encrypted/
 cp ~/.thetacli/keys/encrypted/YOUR_KEYSTORE key/encrypted/
 ```
