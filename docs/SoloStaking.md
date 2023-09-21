@@ -232,6 +232,34 @@ Since we already downloaded config.yaml in the previous step we need to make sur
 - `chainID` - `77529`
 - `p2p.seeds` - `35.91.247.238:12100` 
 
+### 2.3 Update/Download configs.yaml for ETH RPC adapter
+
+There should be a config.yaml already added to subchain ethrpc adapter folder. We need to update the values as follows:
+```shell
+cd /home/ubuntu/metachain_playground/mainchain/subchain/ethrpc
+vi config.yaml
+```
+
+Update `rpc.httpAddress` -> `0.0.0.0`
+
+The final config.yaml for eth rpc should match this:
+```shell
+theta:
+  rpcEndpoint: "http://127.0.0.1:16900/rpc"
+node:
+  skipInitializeTestWallets: true
+rpc:
+  enabled: true
+  httpAddress: "0.0.0.0"
+  httpPort: 19888
+  wsAddress: "127.0.0.1"
+  wsPort: 19889
+  timeoutSecs: 600
+  maxConnections: 2048
+log:
+  levels: "*:debug"
+```
+
 ## 3. Download subchain snapshot
 
 Please contact admin [support@imaginereplay.org](mailto:support@imaginereplay.org) or on discord channel #validator-support for the latest snapshot of subchain. We are currently working on setting up auto backups. Once you get a response that the snapshot is current and up to date please go ahead with next steps.
@@ -266,7 +294,7 @@ cd ~/metachain_playground/mainnet/workspace
 thetasubchain start --config=../subchain/validator --password=<VALIDATOR_PASSWORD>
 ```
 
-The `VALIDATOR_PASSWORD` above corresponds to the password of the keystore file stored in `~/metachain_playground/mainnet/subchain/validator/key/encrypted/`. Once the above process starts running it may take some time to sync to the subchain1c1 
+The `VALIDATOR_PASSWORD` above corresponds to the password of the keystore file stored in `~/metachain_playground/mainnet/subchain/validator/key/encrypted/`. Once the above process starts running it may take some time to sync to the subchain.
 
 ## 5. Open validator and ETH RPC ports
 
@@ -307,6 +335,160 @@ If you make repeated calls you will observe that `latest_finalized_block_height`
 
 At this point please contact [support@imaginereplay.org](mailto:support@imaginereplay.org), do not post your IP address or validator address on discord yet. Once we confirm the validator is running smoothly we will proceed to next step to stake RPLAY tokens, so you can start earning rewards.
 
+## 5. Sanity Checks
+
+If you come across any issues with following checks please refer to our troubleshooting guide for tips.
+
+Once everything seems like its running fine. We need to make following sanity checks:
+
+### 5.1 Test Main chain Node:
+
+We need to make sure the main chain node is completely synced:
+
+```shell
+thetacli query status
+```
+
+The response should look as follows:
+```shell
+{
+    "address": "YOUR_VALIDATOR_ADDRESS",
+    "chain_id": "mainnet",
+    "current_epoch": "SYSTEM_TIME",
+    "current_height": "THIS_VALUE_INCREMENTS",
+    "current_time": "SYSTEM_TIME",
+    "genesis_block_hash": "0xd8836c6cf3c3ccea0b015b4ed0f9efb0ffe6254db793a515843c9d0f68cbab65",
+    "latest_finalized_block_epoch": "THIS_MAY_DIFFER",
+    "latest_finalized_block_hash": "THIS_MAY_DIFFER",
+    "latest_finalized_block_height": "THIS_VALUE_INCREMENTS",
+    "latest_finalized_block_time": "THIS_MAY_DIFFER",
+    "peer_id": "THIS_MAY_DIFFER",
+    "snapshot_block_hash": "THIS_MAY_DIFFER",
+    "snapshot_block_height": "THIS_VALUE_INCREMENTS",
+    "syncing": false
+}
+```
+
+It is very important to make sure that the value `"syncing": false` is set to `false`. This means that main chain node has completely synced all blocks with theta main chain node. This will take few hours since you started. If the sync is still not completed [support@imaginereplay.org](mailto:support@imaginereplay.org) or on discord #validator-support channel. Please raise this issue with theta team as well.
+
+
+### 5.2 Test Main chain ETH RPC adapter:
+
+The main chain node above should completely sync and return `"syncing": false` before proceeding to this step. Assuming you already started main chain eth rpc process from steps above:
+
+Run this command:
+```shell
+curl --location --request POST 'http://localhost:18888/rpc' \
+--header 'Content-Type: application/json' \
+--data-raw '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":67}'
+```
+
+The response should look like this:
+```shell
+{
+  "jsonrpc": "2.0",
+  "id": 67,
+  "result": "0x16d"
+}
+```
+
+### 5.3 Test Sub chain ETH RPC Adapter:
+
+Run following command:
+
+```shell
+curl --location --request POST 'http://localhost:19888/rpc' --header 'Content-Type: application/json' --data-raw '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":67}'
+```
+
+Response should be:
+
+```shell
+{
+  "jsonrpc":"2.0",
+  "id":67,
+  "result":"0x30e375aadebd7205"
+}
+```
+### 5.4 Test Sub chain Node:
+
+Once all the above steps are working and assuming you started subchain eth rpc, and you have no errors, run these commands:
+
+```shell
+curl --location --request POST 'http://localhost:16900/rpc' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "theta.GetStatus",
+  "params": [
+  ]
+}'
+```
+
+The response should look like this:
+```shell
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+        "address": "YOUR_VALIDATOR_ADDRESS",
+        "chain_id": "tsub77529",
+        "peer_id": "THIS_MAY_DIFFER",
+        "latest_finalized_block_hash": "THIS_MAY_DIFFER",
+        "latest_finalized_block_height": "THIS_VALUE_INCREMENTS",
+        "latest_finalized_block_time": "SYSTEM_TIME",
+        "latest_finalized_block_epoch": "SYSTEM_TIME",
+        "current_epoch": "SYSTEM_TIME",
+        "current_height": "THIS_VALUE_INCREMENTS",
+        "current_time": "SYSTEM_TIME",
+        "syncing": false,
+        "genesis_block_hash": "0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0",
+        "snapshot_block_height": "THIS_MAY_DIFFER",
+        "snapshot_block_hash": "THIS_MAY_DIFFER"
+    }
+}
+```
+
+Similar to main chain node the above response should also have - `"syncing": false`. Once you receive above response proceed to next step.
+
+### 5.5 Test Sub chain Node from external IP address:
+
+This is an important step especially if you are running validator from your home wifi, since this will confirm that your port is indeed discoverable over internet. Try to make this call from a different machine/IP.
+
+```shell
+curl --location --request POST 'http://YOUR_IP_ADDRESS:16900/rpc' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "theta.GetStatus",
+  "params": [
+  ]
+}'
+```
+
+If you see the response similar to above that's amazing! You set up is complete. 
+
+If you don't see a response, check if your port 16900 and 12100 is discoverable from internet, by running: `sudo netstat -lt`. If you see that it is available but still cannot make calls. 
+- Download - https://ngrok.com/
+- `cd ~/Downloads`
+- `./ngrok http 16900`
+- You will get a response :  `Forwarding                    http://xxxxx.ngrok.io/ -> http://localhost:16900/`
+- Now make the following call to the ngrok url from above and test:
+
+```shell
+curl --location --request POST 'http://xxxxx.ngrok.io/rpc' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "theta.GetStatus",
+  "params": [
+  ]
+}'
+```
+This will open the port and accept connections. Head over to next section.
+
 ## Stake to a New Validator
 
 As a validator you can stake any amount of RPLAY. There is no limit on amount of RPLAY as long as the admin/operator wallet holds 20k TFuel + additional gas fees  and 1000 wTheta. These funds are held as collateral against running the subchain. Refer to Theta white paper for more details on the protocol.
@@ -326,4 +508,115 @@ node depositStake.js mainnet 5000000000000000000000 <VALIDATOR_ADDRESS> <PATH/TO
 
 The script prints out the ValidatorSet of the next dynasty. Make sure your validators are included. If not, please search with the tx hash on the [Theta Explorer](https://explorer.thetatoken.org/) and see why it failed. A possible cause is that the admin wallet does not have sufficient amount of wTHETA and TFuel (least 1,000 wTHETA and 20,000 TFuel + additional for gas fees are required).
 
-You have to wait ~14-18 hours for the validator to become a functional validator. Please shoot us an email once the staking is completed. Keep an eye on this page for your validator to appear - [Subchain Validators](https://tsub77529-explorer.thetatoken.org/stakes). Once you see your validator address appear congratulations, you are part of replay subchain ecosystem! 
+You have to wait ~14-18 hours for the validator to become a functional validator. Please shoot us an email once the staking is completed. Keep an eye on this page for your validator to appear - [Subchain Validators](https://tsub77529-explorer.thetatoken.org/stakes). Once you see your validator address appear congratulations, you are part of replay subchain ecosystem!
+
+# Troubleshooting Guide
+
+## 1. Main Chain Node Syncing Issues
+
+**Issue:** If the Main Chain node is not syncing properly, it can cause delays in the setup process.
+
+**Solution:**
+- Make sure you are using a machine that meets the hardware requirements specified.
+- Check your internet connection for stability, as a poor network connection can slow down the syncing process.
+- Verify that your `GOPATH` environment variable is set correctly before compiling the Theta binaries.
+- Ensure that you are using the correct Theta repository and branch (e.g., `sc-privatenet`) for the Theta binaries.
+- Monitor the syncing progress by running `thetacli query status` and ensure that `"syncing": false` is eventually set to `false`. If syncing is still not complete after several hours, contact [support@imaginereplay.org](mailto:support@imaginereplay.org) or ping us on our discord #validator-support channel.
+
+## 2. Main Chain ETH RPC Adapter Issues
+
+**Issue:** If the Main Chain ETH RPC Adapter is not functioning properly, it can disrupt communication with the Main Chain node.
+
+**Solution:**
+- Double-check the configuration settings for the Main Chain ETH RPC Adapter.
+- Ensure that you have started the Main Chain ETH RPC Adapter with the correct configuration file. This file is located at `~/metachain_playground/mainchain/mainchain/ethrpc`
+- Verify that the Main Chain node is running and properly synced before starting the ETH RPC Adapter.
+- Test the Main Chain ETH RPC Adapter by sending a request to the endpoint and checking for a valid response.
+
+## 3. Sub Chain ETH RPC Adapter Issues
+
+**Issue:** Similar to the Main Chain ETH RPC Adapter, problems with the Sub Chain ETH RPC Adapter can affect communication between components.
+
+**Solution:**
+- Review the configuration settings for the Sub Chain ETH RPC Adapter.
+- Confirm that you have started the Sub Chain ETH RPC Adapter using the correct configuration file. This file is located at `~/metachain_playground/mainnet/subchain/ethrpc`
+- Ensure that the Sub Chain node is operational and synchronized before starting the ETH RPC Adapter.
+- Test the Sub Chain ETH RPC Adapter by sending a request to its endpoint and checking for a valid response.
+- Make sure the value for `rpc.httpAddress` is set to `0.0.0.0`
+
+## 4. Sub Chain Node Syncing Issues
+
+**Issue:** If the Sub Chain node is not syncing properly, it may cause delays in becoming a functional validator.
+
+**Solution:**
+- Check the configuration settings for the Sub Chain node and make sure they are accurate.
+- Ensure that you have started the Sub Chain node with the correct configuration file. This file is located at `~/metachain_playground/mainnet/subchain/validator`
+- All the values for subchain config file should match the values mentioned above in `Update/Download configs.yaml for validator` section.
+- Make sure the validator key file is added under `~/metachain_playground/mainnet/subchain/validator/key/encrypted` and the password matches the one you used when you created the key.
+- Monitor the syncing progress by sending a request to the Sub Chain node's endpoint and verifying that `"syncing": false` is eventually set to `false`.
+- If syncing takes an unusually long time or encounters errors, contact [support@imaginereplay.org](mailto:support@imaginereplay.org).
+
+## 6. Opening Ports for Validator
+
+**Issue:** Failure to open the required ports can prevent other validators from discovering your node.
+
+**Solution:**
+- Make sure to open the necessary ports for the Subchain Node and Sub Chain ETH RPC Adapter to the public, as specified in the documentation above.
+- Use the provided curl request to verify that the ports are open and accessible from other IP addresses.
+- Confirm that your firewall settings and cloud hosting configurations are correctly configured to allow incoming connections.
+- If you are running from your personal Wifi, some ISP's block external connections. In those cases you might have to open the port manually using external tools such as - https://ngrok.com/. The details are in section `5.5 Test Sub chain Node from external IP address:`
+
+## 7. My Validator is still not working
+
+**Issue:** If your validator is still not working even after running all the steps from above. 
+
+**Solution:**
+Make sure the order of the 4 processes above is correctly run. The order is as follows: 
+1. Mainchain Node - This should be completely synced
+2. Mainchain ETH RPC Adapter 
+3. Subchain ETH RPC Adapter
+4. Subchain Node - This should be completely synced and the logs should indicate that the blocks are finalized.
+
+## 8. Errors running binaries on Mac OS
+
+**Issue:** Though these binaries are not supported on non-ubuntu environments, if you are interested in running on your machine, you might encounter errors during make install step of installing binaries
+
+**Solution:**
+If you see errors similar to this:
+```shell
+make install
+go install ./cmd/...
+go: github.com/thetatoken/theta@v0.0.0 requires
+golang.org/x/sys@v0.0.0-20220412071739-889880a91fd5: missing go.sum entry for go.mod file; to add it:
+    go mod download golang.org/x/sys
+```
+
+You need to run this command and r-run `make install` again
+```shell
+go mod download golang.org/x/sys 
+```
+
+If you get following warnings:
+```shell
+In file included from ../../../../pkg/mod/github.com/karalabe/hid@v0.0.0-20180420081245-2b4488a37358/hid_enabled.go:38:
+
+../../../../pkg/mod/github.com/karalabe/hid@v0.0.0-20180420081245-2b4488a37358/hidapi/mac/hid.c:693:34: warning: 'kIOMasterPortDefault' is deprecated: first deprecated in macOS 12.0 [-Wdeprecated-declarations]
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/IOKit.framework/Headers/IOKitLib.h:133:19: note: 'kIOMasterPortDefault' has been explicitly marked deprecated here
+
+make:  [release] Error 1
+```
+
+Replace the following file:
+```shell
+cd $GOPATH/src/github.com/thetatoken/theta
+or
+cd $THETA_HOME
+
+# depending on your os you might have to replace one of these files:  mul_amd64.h/ mul_arm64.h 
+wget https://replay-subchain.s3.amazonaws.com/mul_arm64.h
+
+make install
+```
+
+If users encounter any other issues or error messages during the setup process, they should consider reaching out to [support@imaginereplay.org](mailto:support@imaginereplay.org) or the #validator-support channel on Discord for assistance. Always proceed with caution and ensure that you have followed the setup instructions accurately before troubleshooting.
