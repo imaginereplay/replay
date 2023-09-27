@@ -262,7 +262,7 @@ log:
 
 ## 3. Download subchain snapshot
 
-Please contact admin [support@imaginereplay.org](mailto:support@imaginereplay.org) or on discord channel #validator-support for the latest snapshot of subchain. We are currently working on setting up auto backups. Once you get a response that the snapshot is current and up to date please go ahead with next steps.
+Follow these steps to download the snapshot and configs.
 
 ```shell
 cd ~/metachain_playground/mainnet/subchain/validator
