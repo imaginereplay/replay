@@ -176,65 +176,21 @@ cd ~/metachain_playground/mainnet/workspace
 theta-eth-rpc-adaptor start --config=../mainchain/ethrpc
 ```
 
-## 2. Update/Download configs
+## 2. Update/Download configs for validator
 
-Make a curl request to this endpoint to get the updated configs for the subchain:
+### 2.1 Update/Download configs.yaml for validator
 
-```shell
-curl -X POST -H 'Content-Type: application/json' --data '{"id":1,"jsonrpc":"2.0","method": "theta.GetStatus","params":[]}' https://rpc-tsub77529.imaginereplay.com/rpc
-```
-
-The response looks like this:
-```shell
-{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "result": {
-        "address": "0xE1A8f31CebeFa3E469b3a45B8CEc2f4C22945407",
-        "chain_id": "tsub77529",
-        "peer_id": "0xE1A8f31CebeFa3E469b3a45B8CEc2f4C22945407",
-        "latest_finalized_block_hash": "0x4ced990fc513db2cf0fd18b615fd904e60344767b5c94eaeda219b53c619cb04",
-        "latest_finalized_block_height": "359239",
-        "latest_finalized_block_time": "1694555950",
-        "latest_finalized_block_epoch": "359239",
-        "current_epoch": "359241",
-        "current_height": "359239",
-        "current_time": "1694555958",
-        "syncing": false,
-        "genesis_block_hash": "0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0",
-        "snapshot_block_height": "0",
-        "snapshot_block_hash": "0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0"
-    }
-}
-```
-
-### 2.1 Update/Download configs.js 
-
-Download the latest configs.js:
+Follow these steps to download the validator config file.
 
 ```shell
-cd ~/metachain_playground/theta-metachain-guide/sdk/js
-wget -O ./configs.js 'https://replay-subchain.s3.amazonaws.com/configs.js'
+cd ~/metachain_playground/mainnet/subchain/validator
+wget -O ./config.yaml 'https://replay-subchain.s3.amazonaws.com/config.yaml'
 ```
 
-Make sure the config values under `MainnetConfigs` match the following values:
-- `govTokenContractAddr` - `0x3Da3D8CDE7B12CD2CBb688E2655BcaCD8946399D`
-- `subchainID` - `77529`
-- `subchainIDStr` - `tsub77529`
-
-Make sure rest of the config contract addresses match with [Theta Mainnet Configs](https://github.com/thetatoken/theta-metachain-guide/blob/master/sdk/js/configs.js)
-
-### 2.2 Update/Download configs.yaml for validator
-
-Since we already downloaded config.yaml in the previous step we need to make sure the values match the following in the file:  
-
-- `genesis.hash` - `0x3daa5a4fc3533a00e087352b4ec51cb82575e1d6e66fd6b1a4047c5d2ea171d0`
-- `chainID` - `77529`
-- `p2p.seeds` - `35.91.247.238:12100` 
-
-### 2.3 Update/Download configs.yaml for ETH RPC adapter
+### 2.2 Update/Download configs.yaml for ETH RPC adapter
 
 There should be a config.yaml already added to subchain ethrpc adapter folder. We need to update the values as follows:
+
 ```shell
 cd /home/ubuntu/metachain_playground/mainchain/subchain/ethrpc
 vi config.yaml
@@ -262,12 +218,11 @@ log:
 
 ## 3. Download subchain snapshot
 
-Follow these steps to download the snapshot and configs.
+Follow these steps to download the snapshot.
 
 ```shell
 cd ~/metachain_playground/mainnet/subchain/validator
 wget -O ./snapshot 'https://replay-subchain.s3.amazonaws.com/snapshots/snapshot'
-wget -O ./config.yaml 'https://replay-subchain.s3.amazonaws.com/config.yaml'
 ```
 
 ## 4. Run the Subchain validator and the ETH RPC Adapter
@@ -491,9 +446,28 @@ This will open the port and accept connections. Head over to next section.
 
 ## Stake to a New Validator
 
+### 6.1 Update/Download configs.js
+
+Download the latest configs.js:
+
+```shell
+cd ~/metachain_playground/theta-metachain-guide/sdk/js
+wget -O ./configs.js 'https://replay-subchain.s3.amazonaws.com/configs.js'
+```
+
+Make sure the config contract addresses match with [Theta Mainnet Configs](https://github.com/thetatoken/theta-metachain-guide/blob/master/sdk/js/configs.js). If you see any discrepancies, please contact theta/replay support.
+
 As a validator you can stake any amount of RPLAY. There is no limit on amount of RPLAY as long as the admin/operator wallet holds 20k TFuel + additional gas fees  and 1000 wTheta. These funds are held as collateral against running the subchain. Refer to Theta white paper for more details on the protocol.
 
-By now you should have completed all the setup and have a validator that's running successfully. Please make sure you contact [support@imaginereplay.org](mailto:support@imaginereplay.org) before staking RPLAY. If you are validated by RPLAY team then go ahead and proceed to the next step:
+### 6.2 Validation from Replay Support Team
+
+By now you should have completed all the setup and have a validator that's running successfully along with main chain node.
+
+Please make sure you contact [support@imaginereplay.org](mailto:support@imaginereplay.org) before staking RPLAY.
+
+If you are validated by RPLAY team and got a go ahead then proceed to the next step:
+
+### 6.3 Deposit stake to a validator
 
 ```shell
 cd ~/metachain_playground/theta-metachain-guide/sdk/js
