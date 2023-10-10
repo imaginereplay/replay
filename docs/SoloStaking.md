@@ -26,6 +26,9 @@ This document offers an overview of launching a validator to be part of Replay s
 You need to have a machine with following requirements and periodically monitor if all the processes are running as expected. These are recommended by Theta team to run a validator as part of Replay sub chain:
 
 ### Hardware Minimum Requirements:
+
+Please ensure that you utilize a dedicated machine solely for running your validator. Running other software on the same machine is discouraged, as these processes demand a significant amount of processing power and bandwidth.
+
 - Memory: 16 GB RAM
 - CPU: 8 cores
 - Storage Disk: 1 TB SSD
@@ -483,6 +486,35 @@ node depositStake.js mainnet 5000000000000000000000 <VALIDATOR_ADDRESS> <PATH/TO
 The script prints out the ValidatorSet of the next dynasty. Make sure your validators are included. If not, please search with the tx hash on the [Theta Explorer](https://explorer.thetatoken.org/) and see why it failed. A possible cause is that the admin wallet does not have sufficient amount of wTHETA and TFuel (least 1,000 wTHETA and 20,000 TFuel + additional for gas fees are required).
 
 You have to wait ~14-18 hours for the validator to become a functional validator. Please shoot us an email once the staking is completed. Keep an eye on this page for your validator to appear - [Subchain Validators](https://tsub77529-explorer.thetatoken.org/stakes). Once you see your validator address appear congratulations, you are part of replay subchain ecosystem!
+
+## Post Validator Setup
+
+Now that you have successfully set up your validator and staked Replay tokens, here are a few important points to keep in mind:
+
+### Can Other Users Stake to My Validator?
+
+Yes, now that your validators are part of the ecosystem, other users can deposit their rewards into your validator. Community members have established staking platforms that simplify the process of staking to existing validators. If you notice that your validator is receiving more rewards than expected, it might be due to staked user rewards. You can monitor this activity on the [Replay Subchain Validator Stakes](https://tsub77529-explorer.thetatoken.org/stakes) page.
+
+### How Does My Validator Earn Rewards?
+
+As part of the validator pool rewards, each validator currently earns 150,000 RPLAY tokens vested over a year. These tokens are airdropped every month as long as your validator continues to perform and create new blocks.
+
+### How Do My Staked Tokens Earn Rewards?
+
+The staker reward per block is currently set at 10 RPLAY tokens. A new block is generated approximately every 7 seconds, and the Theta protocol calculates rewards for each staker proportionally to their staked RPLAY tokens. The more tokens you stake, the higher your rewards as a staker.
+
+It's important to note that the 10 RPLAY tokens are not awarded per staker individually; instead, all stakers collectively earn a total of 10 RPLAY tokens per block. This total is then distributed among each validator in proportion to the amount staked.
+
+For example, if there are 10 stakers, each with 10 staked RPLAY tokens, they will equally share the 10 RPLAY tokens generated in each block. In this scenario, each staker will receive 1 RPLAY per block. The RPLAY tokens received are directly proportional to the number of staked tokens. More details on staker rewards can be found in the Theta Whitepaper.
+
+### How Can I Unstake/Withdraw My Tokens?
+
+Please refer to the unstake/withdrawal guidelines provided in the Theta documentation here: [Withdraw and Claim Stakes](https://github.com/thetatoken/theta-metachain-guide/blob/master/docs/2-testnet/manual-flow/4-more-on-subchain-validator-staking.md#claim-the-stakes-back).
+
+For the most up-to-date instructions on mainchain unstaking and withdrawal guidelines, please contact the Theta team. The provided link is specific to the testnet, as the mainnet documentation may not be updated yet.
+
+In the future, we may have a community-established user interface (UI) that simplifies this process further.
+
 
 # Troubleshooting Guide
 
