@@ -48,6 +48,9 @@ In addition to the hardware requirements, you will need the following tokens:
 - 20,000 TFUEL + additional to cover gas fees : This amount is required to cover cross-chain transfers that require TFUEL. Additional gas fees is to perform deposit stake transaction. 
 - At least 1 RPLAY token :)
 
+For added convenience, we've also added documentation outlining a Docker-based approach to streamline the process [here](https://github.com/imaginereplay/subchain-docker).
+Otherwise, please follow the steps below for Mainchain and Subchain setup.
+
 ## Setup (Run once)
 
 First, please make sure the following software are installed on your machine:
